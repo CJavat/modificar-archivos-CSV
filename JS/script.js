@@ -48,7 +48,7 @@ dropArea.addEventListener("drop", (e) => {
 procesFile = (file) => {
     const docType = file.type;
     const validExtensions = ['text/plain','text/csv','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
-    //let 
+    let resultado = ''; 
 
     if(validExtensions.includes(docType)) {
         //archivo valido.
@@ -56,9 +56,13 @@ procesFile = (file) => {
         
         fileReader.addEventListener('load', e => {
             const fileUrl = fileReader.result;
-            const textoArchivo = `<pre>${fileUrl}</pre>`;
-            document.querySelector('#preview').innerHTML = textoArchivo;
-            console.log(textoArchivo);
+            resultado = fileUrl;
+            console.log(resultado);
+            agregarComas(resultado);
+            //onst textoArchivo = `<pre>${fileUrl}</pre>`;
+            console.log(fileUrl.length);
+            /* document.querySelector('#preview').innerHTML = textoArchivo;
+            console.log(textoArchivo); */
         });
         fileReader.readAsText(file);
     } else {
@@ -72,3 +76,71 @@ procesFile = (file) => {
 /* const uploadFile = (file) => {
 
 } */
+
+
+
+const agregarComas = (text) => {
+    let texto = text;
+    let contadorEspacios = 0;
+    let contadorComas = 0;
+
+    let cadena = '';
+    let cadenaFinal = '';
+    
+    
+    let bandera = false;
+    let banderaComas = false;
+
+    let caracteres = /[a-zA-Z0-9]/g;
+    let finCadena = 0;
+    
+    for(let i=0; i < texto.length; i++) {
+        finCadena++;
+        cadena += texto[i];
+
+        if(texto.charAt(i) == ' ') {
+            contadorEspacios++;
+            
+            if(contadorEspacios > 1) {
+                //console.log("SEARCH"+cadena.search(caracteres));
+                if(cadena.search(caracteres) != -1) {
+                    bandera=true;
+                }
+            }
+        }
+        else if(texto.charAt(i) == ',') {
+            contadorComas++;
+            if(contadorComas == 4) {
+                banderaComas = true;
+            }
+            //console.log("soy una coma");
+        }
+        else if(finCadena == texto.length) {
+            console.log("longitud fincadena: "+finCadena);
+            console.log("final de la cadena: "+cadena);
+            /*banderaComas = true; */
+            
+        } 
+        else {
+            contadorEspacios = 0;
+        }
+
+        if(bandera == true) {
+            cadenaFinal += cadena.trim();
+            cadenaFinal += ',';
+            cadena = '';
+            bandera = false;
+        }
+        else if(banderaComas == true) {
+            console.log("banderaComas"+cadenaFinal);
+            //cadenaFinal += cadena.trimStart();
+            cadenaFinal += ',,,';
+            console.log("banderaComassin espacio"+cadenaFinal);
+            //cadenaFinal += ',';
+            banderaComas = false;
+        }
+
+        console.log(cadenaFinal);
+    }
+    console.log("CADENA TERMINADA: " + cadenaFinal);
+}
