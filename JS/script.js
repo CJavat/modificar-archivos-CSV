@@ -47,23 +47,20 @@ dropArea.addEventListener("drop", (e) => {
 
 procesFile = (file) => {
     const docType = file.type;
-    const validExtensions = ['text/plain','image/jpeg','text/csv','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
+    const validExtensions = ['text/plain','text/csv','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',];
+    //let 
 
     if(validExtensions.includes(docType)) {
         //archivo valido.
         const fileReader = new FileReader();
-        const id = `file-${Math.random().toString(32).substring(7)}`;
-
+        
         fileReader.addEventListener('load', e => {
             const fileUrl = fileReader.result;
-            
-            const textDiv = `<p>${fileUrl}</p>`;
-            const html = document.querySelector('#preview').innerHTML;
-            document.querySelector('#preview').innerHTML = textDiv + html;
+            const textoArchivo = `<pre>${fileUrl}</pre>`;
+            document.querySelector('#preview').innerHTML = textoArchivo;
+            console.log(textoArchivo);
         });
         fileReader.readAsText(file);
-        console.log(fileReader.readAsText(file));
-       /* uploadFile(file. id); */
     } else {
         //No es archivo valido.
         console.log(docType);
