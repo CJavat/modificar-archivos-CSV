@@ -1,0 +1,15 @@
+.drag-drop {
+    text-align: center;
+    width: 35rem;
+    height: 20rem;
+    margin: 0 auto;
+    border: 5px dashed rgba(0, 0, 0, 0.376);
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.active {
+    background-color: rgba(43, 132, 216, 0.722);
+}
