@@ -2,7 +2,11 @@ const dropArea = document.querySelector('.drag-drop');
 const dragText = dropArea.querySelector('h2');
 const button = dropArea.querySelector('button');
 const input = dropArea.querySelector('#input-file');
+const preview = document.querySelector('#preview');
+const tabla = document.querySelector('#tabla');
+
 let files;
+let cadenaConTexto = '';
 
 button.addEventListener("click", () => {
     input.click();
@@ -58,11 +62,8 @@ procesFile = (file) => {
             const fileUrl = fileReader.result;
             resultado = fileUrl;
             console.log(resultado);
-            agregarComas(resultado);
-            //onst textoArchivo = `<pre>${fileUrl}</pre>`;
-            console.log(fileUrl.length);
-            /* document.querySelector('#preview').innerHTML = textoArchivo;
-            console.log(textoArchivo); */
+            const textoTerminado = agregarComas(resultado);
+            mostrarTabla(textoTerminado);
         });
         fileReader.readAsText(file);
     } else {
@@ -73,110 +74,157 @@ procesFile = (file) => {
     }
 }
 
-/* const uploadFile = (file) => {
-
-} */
-
-
-
 const agregarComas = (text) => {
     let texto = text;
     let contadorEspacios = 0;
     let contadorComas = 0;
-
     let cadena = '';
-    let cadenaFinal = '';
-    let cadenaConEspacios = '';
-    
-    let bandera = false;
-    let banderaComas = false;
-
     let caracteres = /[a-zA-Z0-9]/g;
-    let finCadena = 0;
     let subCadena = '', aux = '';
 
     for(let i=0; i <= texto.length; i++) {
-        finCadena++;
         cadena += texto[i];
-        if(texto.charAt(i)==',') {
-            contadorComas++;
-            /* console.log(contadorComas); */
-        }
         
-        if(cadena.includes("\n") == true | contadorComas == 4) {
-            console.log('salto de linea: ' + cadena);
-            //aux='';
+        
+        if(cadena.includes("\n") == true) {
+            aux='';
             for(let i=0; i<cadena.length; i++) {
-                console.log('valor de aux1-- ' + aux);
+                
                 aux += cadena[i];
-                console.log("aux--"+aux);
-                console.log("cad--"+cadena);
-                console.log("aux con espacio = "+(aux.charAt(i) === ' '));
-                console.log("aux con comas = "+(cadena.charAt(i) === ','));
-                if((cadena.charAt(i) === " ") == true) {
+                
+                if((cadena[i] === " ")) {
                     contadorEspacios++;
-                    console.log("contador de espacios----"+contadorEspacios);
+                    
                     if(contadorEspacios>1) {
-                        console.log("cadena con 2 espacios: "+aux.trimStart());
-                        //aux = aux.trimStart();
-
+                        
                         if(aux.search(caracteres) != -1) {
-                            console.log("aux tiene caracteres y 2 espacios: "+aux);
-                            console.log("aux sin trim:"+aux);
-                            subCadena += aux.trimStart();
-                            subCadena = subCadena.substring(0,subCadena.length-1);
-                            subCadena += ',';
-
-                            console.log("aux con trim:"+aux.trimStart());
-                            aux = '';
+                                aux = aux.trim();
+                                aux = aux.replace('"','');
+                                tabla.innerHTML = ``;
+                                if(aux.includes("$") && aux.includes(",")) {
+                                    aux = '"' + aux
+                                    aux = aux + '"';
+                                }
+                                subCadena += aux;
+                                subCadena += ',';
+                                
+                                aux = '';
+                                contadorEspacios = 0;
+                        }
+                        else {
+                            aux = aux.trim();
                             contadorEspacios = 0;
-                            console.log('valor de aux2-- ' + aux);
-                            /* console.log("subcadena: "+subCadena);
-                            subCadena += aux;
-                            aux = '';
-                            contadorEspacios = 0; */
                         }
                     }
                 }
-                else if((cadena.charAt(i) === ",")==true) {
-                    console.log('entroooooo---'+cadena);
-                    console.log('cont---'+contadorComas);
-
+                else if(cadena[i] === ",") {
                     contadorComas++;
+                    
                     if(contadorComas == 4) {
-                        console.log('cont comas---'+aux);
-                        subCadena += aux.trimStart();
+                        aux = aux.trim();
+                        aux = aux.replace('"','');
+                        subCadena += aux;
+                        subCadena += '\n';
                     }
                 }
                 else {
                     contadorComas = 0;
-
+                    contadorEspacios = 0;
                 }
             }
-
-
-            cadenaFinal += cadena;
             cadena = '';
             contadorComas = 0;
         }
-        
-        
     }
-    //console.log("CADENA ORIGINAL: --> \n" + texto);
-    //console.log("CADENA TERMINADA: --> \n" + cadenaFinal);
-    console.log("CADENA TERMINADA: --> \n" + subCadena);
+    //console.log('subCadena\n' + subCadena);
+    return subCadena;
 }
 
+const mostrarTabla = (cadenaConTexto) => {
+    let fila = 0;
+    let columna = 0;
+    let textoTabla = '';
+    let contadorComas = 0;
+    let aux =  '', contAux = 0;
+    let bandera = false;
+    let caracteres = /[a-zA-Z0-9]/g;
 
+    console.log('cadenaFinal\n'+cadenaConTexto);
+    tabla.innerHTML = `<tr id="fila-${fila}"></tr>`;
+    //document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-1">fgfg</td>`;
 
+    for(let i=0; i<cadenaConTexto.length; i++) {
+        textoTabla += cadenaConTexto[i];
+        if(cadenaConTexto[i] === ',') {
+            console.log(cadenaConTexto[i]);
+            contadorComas++;
+            
+            console.log(`contador de comas: ${contadorComas}`);
+
+            if(contadorComas < 2 && cadenaConTexto[i+1] != ",") {
+                console.log("textoTabla con includes" + textoTabla.includes('"'));
+                console.log("textoTabla" + textoTabla);
+
+                if(textoTabla.includes('"')) {
+                    contAux++;
+                    aux += textoTabla;
+                    console.log("variable auxiliar: "+aux);
+                    if(contAux > 1) {
+                        aux = aux.replace(",","");
+                        bandera = true;
+                    }
+                }
+                else {
+                    textoTabla = textoTabla.replace(",","");
+                    document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${textoTabla}</td>`;
+                }
+                
+                if(bandera == true) {
+                    aux = aux.replace(",","");
+                    console.log("variable auxiliar SIN COMA: "+aux);
+                    document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${aux}</td>`;
+                    bandera = false;
+                }
+                //document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${textoTabla}</td>`;
+                contadorComas = 0;
+                textoTabla = '';
+            }
+            else {
+                //-------------
+                //fila++
+                //columna = 0
+            }
+        }
+        else if(contadorComas == 4 || contadorComas == 5) {
+            //-- AGREGAR NUEVA FILA. --
+            console.log("----search"+textoTabla.search(caracteres) != -1);
+            console.log("---------textotabla"+textoTabla);
+            if(textoTabla.search(caracteres) != -1) {
+                textoTabla = textoTabla.replace(",","");
+                textoTabla = textoTabla.replace(",","");
+                textoTabla = textoTabla.replace(",","");
+                textoTabla = textoTabla.replace(",","");
+                textoTabla = textoTabla.replace(",","");
+                document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${textoTabla}</td>`;
+                fila++;
+                textoTabla = '';
+                tabla.innerHTML += `<tr id="fila-${fila}"></tr>`;
+                contadorComas = 0;
+            }
+            else {
+                fila++;
+                textoTabla = '';
+                tabla.innerHTML += `<tr id="fila-${fila}"></tr>`;
+                contadorComas = 0;
+            }
+        }
+        else {
+            
+        }
+    }
+
+}
 /*
-
-falta quitarle los espacios y (' ").
-
-Codigo de paquete         Nombre            Medidas   Costo -10%     Precio       ML 20%                         ,,,,
-LVP-03-CHM            16x19mm               2x8m        $631.00         757.2     ,,,,
-LVP-005-CK            13x15mm               1x3m        $130.00          256,,,,
-LVP-06-CHM            19x19mm             2.3x3m        $235.00        293.75,,,,
-
-
+    Codigo de paquete,Nombre,Medidas,Costo -10%,Precio,ML 20%,,,,,
+    LVP-10-CHM,16x19mm,2x20m,"$1,670.58",2088.23,,,,
 */

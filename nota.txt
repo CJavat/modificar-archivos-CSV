@@ -77,3 +77,25 @@ if(texto.charAt(i) == ' ') {
         }
 
         //console.log(`Cadena: ${cadena}` + "VAR-CADENA FINAL: --> " + cadenaFinal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

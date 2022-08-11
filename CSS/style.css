@@ -13,3 +13,21 @@
 .active {
     background-color: rgba(43, 132, 216, 0.722);
 }
+
+#preview {
+    width: 50%;
+    margin: 1.5rem;
+    border: 1px solid red;
+    padding: 10px;
+}
+
+#tabla {
+    color: black;
+    border: 1px solid green;
+    padding: 10px;
+}
+
+#tabla td {
+    border: 1px solid blue;
+    padding: 2rem;
+}
