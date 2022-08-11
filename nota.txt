@@ -1,0 +1,79 @@
+if(texto.charAt(i) == ' ') {
+            contadorEspacios++;
+            
+            if(contadorEspacios > 1) {
+                //console.log("SEARCH"+cadena.search(caracteres));
+                if(cadena.search(caracteres) != -1) {
+                    bandera=true;
+                }
+                else {
+                    if(cadena.search) {
+
+                    }
+                }
+            }
+        }
+        else if(texto.charAt(i) == ',') {
+            contadorComas++;
+            if(contadorComas == 4) {
+                banderaComas = true;
+            }
+            //console.log("soy una coma" + contadorComas);
+        }
+        else if(finCadena == texto.length) {
+            console.log("longitud fincadena: "+finCadena);
+            console.log("final de la cadena: "+cadena);
+            /*banderaComas = true; */
+            
+        } 
+        else {
+            contadorEspacios = 0;
+        }
+        
+        if(contadorEspacios <= 1 & texto.charAt(i).includes('"')==false) {
+            console.log(cadenaConEspacios.includes('"'));
+            console.log(cadena);
+            cadena += texto[i];
+            cadenaConEspacios = '';
+        }
+        else {
+            cadenaConEspacios += texto[i];
+            if(cadenaConEspacios.includes(',')) {
+                console.log("Tiene comaaaaaaa: " + cadenaConEspacios);
+                console.log();
+                console.log("cadena con espacios" + cadenaConEspacios);
+                cadena += cadenaConEspacios.trimStart();
+                console.log("cadena sin espacios" + cadena);
+                cadenaConEspacios = '';
+            }
+            console.log("cadena con espacios" + cadenaConEspacios);
+        }
+        
+        if(bandera == true) {
+            //cadena = cadena.substring(0, cadena.length-1);
+            /* console.log("asdasd"+cadena);
+            console.log("asdas2"+cadenaFinal);
+            //cadenaFinal += cadena.trim();
+            cadenaFinal += cadena;
+            cadenaFinal += ',';
+            console.log("asdasd"+cadena);
+            console.log("asdas2"+cadenaFinal); */
+            
+            /* cadena = '';
+            bandera = false; */
+        }
+        else if(banderaComas == true) {
+            //console.log("asdasd"+cadena);
+            
+            console.log("banderaComas--> "+cadenaFinal);
+            //cadenaFinal += cadena.trimStart();
+            cadenaFinal += cadena;
+            cadenaFinal += '\n';
+            console.log("banderaComa sin espacio --> "+cadenaFinal);
+            
+            cadena = '';
+            contadorComas = 0;
+            banderaComas = false;
+        }
+
+        //console.log(`Cadena: ${cadena}` + "VAR-CADENA FINAL: --> " + cadenaFinal);

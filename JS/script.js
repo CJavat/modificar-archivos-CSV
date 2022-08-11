@@ -86,61 +86,97 @@ const agregarComas = (text) => {
 
     let cadena = '';
     let cadenaFinal = '';
-    
+    let cadenaConEspacios = '';
     
     let bandera = false;
     let banderaComas = false;
 
     let caracteres = /[a-zA-Z0-9]/g;
     let finCadena = 0;
-    
-    for(let i=0; i < texto.length; i++) {
+    let subCadena = '', aux = '';
+
+    for(let i=0; i <= texto.length; i++) {
         finCadena++;
         cadena += texto[i];
+        if(texto.charAt(i)==',') {
+            contadorComas++;
+            /* console.log(contadorComas); */
+        }
+        
+        if(cadena.includes("\n") == true | contadorComas == 4) {
+            console.log('salto de linea: ' + cadena);
+            //aux='';
+            for(let i=0; i<cadena.length; i++) {
+                console.log('valor de aux1-- ' + aux);
+                aux += cadena[i];
+                console.log("aux--"+aux);
+                console.log("cad--"+cadena);
+                console.log("aux con espacio = "+(aux.charAt(i) === ' '));
+                console.log("aux con comas = "+(cadena.charAt(i) === ','));
+                if((cadena.charAt(i) === " ") == true) {
+                    contadorEspacios++;
+                    console.log("contador de espacios----"+contadorEspacios);
+                    if(contadorEspacios>1) {
+                        console.log("cadena con 2 espacios: "+aux.trimStart());
+                        //aux = aux.trimStart();
 
-        if(texto.charAt(i) == ' ') {
-            contadorEspacios++;
-            
-            if(contadorEspacios > 1) {
-                //console.log("SEARCH"+cadena.search(caracteres));
-                if(cadena.search(caracteres) != -1) {
-                    bandera=true;
+                        if(aux.search(caracteres) != -1) {
+                            console.log("aux tiene caracteres y 2 espacios: "+aux);
+                            console.log("aux sin trim:"+aux);
+                            subCadena += aux.trimStart();
+                            subCadena = subCadena.substring(0,subCadena.length-1);
+                            subCadena += ',';
+
+                            console.log("aux con trim:"+aux.trimStart());
+                            aux = '';
+                            contadorEspacios = 0;
+                            console.log('valor de aux2-- ' + aux);
+                            /* console.log("subcadena: "+subCadena);
+                            subCadena += aux;
+                            aux = '';
+                            contadorEspacios = 0; */
+                        }
+                    }
+                }
+                else if((cadena.charAt(i) === ",")==true) {
+                    console.log('entroooooo---'+cadena);
+                    console.log('cont---'+contadorComas);
+
+                    contadorComas++;
+                    if(contadorComas == 4) {
+                        console.log('cont comas---'+aux);
+                        subCadena += aux.trimStart();
+                    }
+                }
+                else {
+                    contadorComas = 0;
+
                 }
             }
-        }
-        else if(texto.charAt(i) == ',') {
-            contadorComas++;
-            if(contadorComas == 4) {
-                banderaComas = true;
-            }
-            //console.log("soy una coma");
-        }
-        else if(finCadena == texto.length) {
-            console.log("longitud fincadena: "+finCadena);
-            console.log("final de la cadena: "+cadena);
-            /*banderaComas = true; */
-            
-        } 
-        else {
-            contadorEspacios = 0;
-        }
 
-        if(bandera == true) {
-            cadenaFinal += cadena.trim();
-            cadenaFinal += ',';
+
+            cadenaFinal += cadena;
             cadena = '';
-            bandera = false;
+            contadorComas = 0;
         }
-        else if(banderaComas == true) {
-            console.log("banderaComas"+cadenaFinal);
-            //cadenaFinal += cadena.trimStart();
-            cadenaFinal += ',,,';
-            console.log("banderaComassin espacio"+cadenaFinal);
-            //cadenaFinal += ',';
-            banderaComas = false;
-        }
-
-        console.log(cadenaFinal);
+        
+        
     }
-    console.log("CADENA TERMINADA: " + cadenaFinal);
+    //console.log("CADENA ORIGINAL: --> \n" + texto);
+    //console.log("CADENA TERMINADA: --> \n" + cadenaFinal);
+    console.log("CADENA TERMINADA: --> \n" + subCadena);
 }
+
+
+
+/*
+
+falta quitarle los espacios y (' ").
+
+Codigo de paquete         Nombre            Medidas   Costo -10%     Precio       ML 20%                         ,,,,
+LVP-03-CHM            16x19mm               2x8m        $631.00         757.2     ,,,,
+LVP-005-CK            13x15mm               1x3m        $130.00          256,,,,
+LVP-06-CHM            19x19mm             2.3x3m        $235.00        293.75,,,,
+
+
+*/
