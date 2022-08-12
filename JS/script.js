@@ -4,20 +4,11 @@ const button = dropArea.querySelector('button');
 const input = dropArea.querySelector('#input-file');
 const preview = document.querySelector('#preview');
 const tabla = document.querySelector('#tabla');
+const botonDescargar = document.querySelector('#botonDescargar');
 
 let files;
 let cadenaConTexto = '';
-
-button.addEventListener("click", () => {
-    input.click();
-});
-
-input.addEventListener("change", () => {
-    files = this.files;
-    dropArea.classList.add("active");
-    showFiles(files)
-    dropArea.classList.remove("active");
-});
+let textoTerminado = '';
 
 const showFiles = () => {
     if(files.length === undefined) {
@@ -61,8 +52,8 @@ procesFile = (file) => {
         fileReader.addEventListener('load', e => {
             const fileUrl = fileReader.result;
             resultado = fileUrl;
-            console.log(resultado);
-            const textoTerminado = agregarComas(resultado);
+            //console.log(resultado);
+            textoTerminado = agregarComas(resultado);
             mostrarTabla(textoTerminado);
         });
         fileReader.readAsText(file);
@@ -70,21 +61,20 @@ procesFile = (file) => {
         //No es archivo valido.
         console.log(docType);
         alert("No es un archivo valido");
-        
     }
 }
 
 const agregarComas = (text) => {
     let texto = text;
+    let cadena = '';
+    let subCadena = '';
+    let aux = '';
     let contadorEspacios = 0;
     let contadorComas = 0;
-    let cadena = '';
     let caracteres = /[a-zA-Z0-9]/g;
-    let subCadena = '', aux = '';
 
     for(let i=0; i <= texto.length; i++) {
         cadena += texto[i];
-        
         
         if(cadena.includes("\n") == true) {
             aux='';
@@ -143,15 +133,18 @@ const agregarComas = (text) => {
 const mostrarTabla = (cadenaConTexto) => {
     let fila = 0;
     let columna = 0;
+    let cadenaDiferente =  '';
     let textoTabla = '';
     let contadorComas = 0;
-    let aux =  '', contAux = 0;
-    let bandera = false;
+    let contadorComillas = 0;
+    let dosComillas = false;
     let caracteres = /[a-zA-Z0-9]/g;
 
-    console.log('cadenaFinal\n'+cadenaConTexto);
+    preview.classList.add("preview");
+    tabla.classList.add("tabla");
+
+    //console.log('cadenaFinal\n'+cadenaConTexto);
     tabla.innerHTML = `<tr id="fila-${fila}"></tr>`;
-    //document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-1">fgfg</td>`;
 
     for(let i=0; i<cadenaConTexto.length; i++) {
         textoTabla += cadenaConTexto[i];
@@ -166,12 +159,12 @@ const mostrarTabla = (cadenaConTexto) => {
                 console.log("textoTabla" + textoTabla);
 
                 if(textoTabla.includes('"')) {
-                    contAux++;
-                    aux += textoTabla;
-                    console.log("variable auxiliar: "+aux);
-                    if(contAux > 1) {
-                        aux = aux.replace(",","");
-                        bandera = true;
+                    contadorComillas++;
+                    cadenaDiferente += textoTabla;
+                    console.log("variable auxiliar: "+cadenaDiferente);
+                    if(contadorComillas > 1) {
+                        cadenaDiferente = cadenaDiferente.replace(",","");
+                        dosComillas = true;
                     }
                 }
                 else {
@@ -179,20 +172,16 @@ const mostrarTabla = (cadenaConTexto) => {
                     document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${textoTabla}</td>`;
                 }
                 
-                if(bandera == true) {
-                    aux = aux.replace(",","");
-                    console.log("variable auxiliar SIN COMA: "+aux);
-                    document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${aux}</td>`;
-                    bandera = false;
+                if(dosComillas == true) {
+                    cadenaDiferente = cadenaDiferente.replace(",","");
+                    console.log("variable auxiliar SIN COMA: "+cadenaDiferente);
+                    document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${cadenaDiferente}</td>`;
+                    dosComillas = false;
+                    cadenaDiferente = '';
+                    contadorComillas = 0;
                 }
-                //document.querySelector(`#fila-${fila}`).innerHTML += `<td id="columna-${columna}">${textoTabla}</td>`;
                 contadorComas = 0;
                 textoTabla = '';
-            }
-            else {
-                //-------------
-                //fila++
-                //columna = 0
             }
         }
         else if(contadorComas == 4 || contadorComas == 5) {
@@ -218,13 +207,22 @@ const mostrarTabla = (cadenaConTexto) => {
                 contadorComas = 0;
             }
         }
-        else {
-            
-        }
     }
-
+    //Agregar el botón de descargar.
+    botonDescargar.innerHTML = '<button id="descargar">Descargar Archivo</button>';
+    document.querySelector('#descargar').addEventListener("click",() =>{
+        exportar(textoTerminado,"archivo.csv")
+    });
+    
 }
-/*
-    Codigo de paquete,Nombre,Medidas,Costo -10%,Precio,ML 20%,,,,,
-    LVP-10-CHM,16x19mm,2x20m,"$1,670.58",2088.23,,,,
-*/
+
+exportar = (contenido, nombreArchivo) => {
+    const a = document.createElement("a");
+    const contenidoArchivo = contenido,
+                    blob = new Blob([contenidoArchivo],{type: "octet/stream"}),
+                    url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = nombreArchivo;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
